@@ -10,7 +10,7 @@ python voc_object_detection.py
 ```
 to train the object detector. 
 
-There is also an experimentation with `focal_loss` in `tf_object_detection.py` to stabilise the Focal Loss in a similar manner to the [sigmoid loss](https://www.tensorflow.org/api_docs/python/tf/nn/sigmoid_cross_entropy_with_logits). Since the Focal Loss is given by
+There is also an experimentation with `focal_loss` in `tf_object_detection.py` to stabilise the Focal Loss in a similar manner to the [sigmoid loss](https://www.tensorflow.org/api_docs/python/tf/nn/sigmoid_cross_entropy_with_logits). Let the labels be `z` and the logits be `x`. Since the Focal Loss is given by
 ```
 Focal Loss 
 = z * a * power(1 - sigmoid(x), gamma) * -log(sigmoid(x)) +\
