@@ -20,9 +20,9 @@ Focal Loss
 = z * a * power(1 - sigmoid(x), gamma) * log(1 + exp(-x)) +\
   (1 - z) * (1 - a) * power(sigmoid(x), gamma) * (-log(exp(-x)) + log(1 + exp(-x)))
 = z * a * power(1 - sigmoid(x), gamma) * log(1 + exp(-x)) +\
-  (1 - z) * (1 - a) * power(sigmoid(x), gamma) * (x + log(1 + exp(-x))).
+  (1 - z) * (1 - a) * power(sigmoid(x), gamma) * (x + log(1 + exp(-x))),
 ```
-We can observe that the loss is numerically stable for `x > 0`. For `x < 0`, the Focal Loss can be expressed as
+we can observe that the loss is numerically stable for `x > 0`. For `x < 0`, the Focal Loss can be expressed as
 ```
 Focal Loss
 = z * a * log(1 + exp(-x)) * power(1 - sigmoid(x), gamma) +\
