@@ -44,8 +44,8 @@ Therefore, our Focal Loss is implemented as follows:
 ```
 Focal Loss
 = z * a * power(1 - sigmoid(x), gamma) * log(1 + exp(-abs(x))) +\
-  (1 - z) * (1 - a) * power(sigmoid(x), gamma) * (x + log(1 + exp(-abs(x)))) -\
-  z * a * min(x, 0) * power(1 - sigmoid(x), gamma).
+  (1 - z) * (1 - a) * power(sigmoid(x), gamma) * log(1 + exp(-abs(x))) +\
+  (1 - z) * (1 - a) * power(sigmoid(x), gamma) * max(x, 0) - z * a * min(x, 0) * power(1 - sigmoid(x), gamma).
 ```
 Some detection results are shown below.
 
