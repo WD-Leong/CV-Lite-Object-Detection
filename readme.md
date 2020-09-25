@@ -1,6 +1,8 @@
 # Custom Object Detection
 
-This repository contains my experiments with custom object detection models whose weights are trained from scratch, that is to say, no pre-trained backbone model is used. The model is relatively small and trained on the [VOC 2012](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/) dataset. To run the object detection, first run
+This repository contains my experiments with custom object detection models whose weights are trained from scratch, that is to say, no pre-trained backbone model is used. This model is inspired from [EfficientDet](https://arxiv.org/abs/1911.09070), where the object detection model's weights were trained from scratch, and [FCOS](https://arxiv.org/abs/1904.01355), which is an anchor-free model. The model explored is relatively small, utilising Feature Pyramid Networks, and trained on the [VOC 2012](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/) and the [COCO](https://cocodataset.org/#home) dataset. 
+
+To run the object detection, first run
 ```
 python process_voc_object_detection.py
 ```
@@ -8,8 +10,21 @@ followed by
 ```
 python voc_object_detection.py
 ```
-to train the object detector. 
+to train the object detector. For the COCO object detection, due to the large size, a more optimal method to feed the images is used. Hence, please run
+```
+python process_voc_object_detection.py
+```
+followed by
+```
+python format_COCO_annotations.py
+```
+and finally
+```
+python coco_object_detection.py
+```
+to train the object detection algorithm using the COCO dataset.
 
+## Experiment with Numerically Stable Focal Loss Function
 There is also an experimentation with `focal_loss` in `tf_object_detection.py` to stabilise the Focal Loss in a similar manner to the [sigmoid loss](https://www.tensorflow.org/api_docs/python/tf/nn/sigmoid_cross_entropy_with_logits). Let the labels be `z` and the logits be `x`. Since the Focal Loss is given by
 ```
 Focal Loss 
@@ -47,15 +62,21 @@ Focal Loss
   (1 - z) * (1 - a) * power(sigmoid(x), gamma) * log(1 + exp(-abs(x))) +\
   (1 - z) * (1 - a) * power(sigmoid(x), gamma) * max(x, 0) - z * a * min(x, 0) * power(1 - sigmoid(x), gamma).
 ```
-Some detection results are shown below.
+The algorithm looked Some detection results are shown below.
 
-Sample Result 1:
-![Result 12](obj_detection_result_12.jpg)
+## VOC Results
+The results of the object detection model trained using the VOC dataset is shown in this section (to be updated again).
+Sample Result 1 | Sample Result 2 | Heatmap
+:-------------------------:|:-------------------------:|:-------------------------:
+![Result 12](obj_detection_result_12.jpg) | ![Result 24](obj_detection_result_24.jpg) | ![Result with Heatmap](obj_detection_result.jpg)
 
-Sample Result 2:
-![Result 24](obj_detection_result_24.jpg)
+Please note that the black boxes indicate ground truth while red boxes indicate the predicted bounding box in the detection desult with the heatmap.
 
-Detection Result with Heatmap (black boxes indicate ground truth while red boxes indicate the predicted bounding box):
-![Result with Heatmap](obj_detection_result.jpg)
+## COCO Results
+The results of the object detection model trained using the COCO dataset is shown in this section. The model's ability to identify the object as the training progress is shown in the animated GIF below.
+<img src="coco_object_detection.gif"/>
+
+The model is tested on a few test images, including the usual kite image.
+
 
 
