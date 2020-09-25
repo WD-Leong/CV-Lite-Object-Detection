@@ -22,7 +22,10 @@ and finally
 ```
 python coco_object_detection.py
 ```
-to train the object detection algorithm using the COCO dataset.
+to train the object detection algorithm using the COCO dataset. The COCO object detection model has approximately 9M parameters.
+
+## Hardware
+The models are trained on an Nvidia P1000 4GB Graphics card. As a result, the gradients are manually accumulated in sub-batches of 12 with a total batch size of 96. The input image is resized to 320 by 320 pixels to allow it to be trained with a lower-end GPU.
 
 ## Experiment with Numerically Stable Focal Loss Function
 There is also an experimentation with `focal_loss` in `tf_object_detection.py` to stabilise the Focal Loss in a similar manner to the [sigmoid loss](https://www.tensorflow.org/api_docs/python/tf/nn/sigmoid_cross_entropy_with_logits). Let the labels be `z` and the logits be `x`. Since the Focal Loss is given by
@@ -76,7 +79,9 @@ Please note that the black boxes indicate ground truth while red boxes indicate 
 The results of the object detection model trained using the COCO dataset is shown in this section. The model's ability to identify the object as the training progress is shown in the animated GIF below.
 <img src="coco_object_detection.gif"/>
 
-The model is tested on a few test images, including the usual kite image.
+The model is tested on a few test images as shown below.
+Kite | Meeting | Traffic
+:-------------------------:|:-------------------------:|:-------------------------:
+![Rkite](kite_result.jpg) | ![meeting](meeting_result.jpg) | ![sg_traffic](sg_traffic_result.jpg)
 
-
-
+As can be observed, the detection rate in dense images is not particularly good. This is likely to be due to the image being resized to 320 by 320 pixels. 
