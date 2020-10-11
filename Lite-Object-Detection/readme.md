@@ -22,7 +22,7 @@ and finally
 ```
 python coco_object_detection.py
 ```
-to train the object detection algorithm using the COCO dataset. The COCO object detection model has approximately 9M parameters.
+to train the object detection algorithm using the COCO dataset. The COCO object detection model has approximately 9M parameters. The NMS algorithm in `coco_detect.py` is modified from [here](https://github.com/klauspa/Yolov4-tensorflow).
 
 ## Hardware
 The models are trained on an Nvidia P1000 4GB Graphics card. As a result, the gradients are manually accumulated in sub-batches of 12 with a total batch size of 96. The input image is resized to 320 by 320 pixels to allow it to be trained with a lower-end GPU.
