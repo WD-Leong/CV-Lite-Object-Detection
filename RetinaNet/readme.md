@@ -18,3 +18,5 @@ To infer using the trained model, run
 ```
 python infer_retinanet.py
 ```
+
+Please note that this is still Work-in-Progress.
