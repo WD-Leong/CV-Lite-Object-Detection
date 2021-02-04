@@ -181,9 +181,9 @@ def format_data(gt_labels, img_dim, num_classes,
             tmp_outputs.append(tmp_output)
         else:
             # Sort the labels by area from largest to smallest.     #
-            # Then the smallest area will automatically fill up any #
-            # overlapping grid positions since it is the last to be #
-            # filled up.                                            #
+            # Then the smallest area will automatically overwrite   #
+            # any overlapping grid positions since it is the last   #
+            # to be filled up.                                      #
             
             # For FCOS, fill up all grid positions which the bounding #
             # box occupies in the feature map. Note that we also clip #
@@ -192,6 +192,7 @@ def format_data(gt_labels, img_dim, num_classes,
             # the (l, r, t, b) computation to return negative values  #
             # and usually occurs when the object is near or at the    #
             # edge of the image.                                      #
+            
             tmp_labels = gt_labels.numpy()[tmp_idx, :]
             if len(tmp_labels) == 1:
                 tmp_sorted = tmp_labels
@@ -256,12 +257,12 @@ def format_data(gt_labels, img_dim, num_classes,
                         tmp_x_low:tmp_x_upp, :4]
                     tmp_lr_ratio = np.divide(
                         np.minimum(tmp_array[..., 0], 
-                                   tmp_array[..., 1]), 
+                                   tmp_array[..., 1]) + 1.0e-8, 
                         np.maximum(tmp_array[..., 0], 
                                    tmp_array[..., 1]) + 1.0e-8)
                     tmp_tb_ratio = np.divide(
                         np.minimum(tmp_array[..., 2], 
-                                   tmp_array[..., 3]), 
+                                   tmp_array[..., 3]) + 1.0e-8, 
                         np.maximum(tmp_array[..., 2], 
                                    tmp_array[..., 3]) + 1.0e-8)
                     
@@ -296,7 +297,7 @@ def format_data(gt_labels, img_dim, num_classes,
                         tmp_y_low:tmp_y_upp, tmp_x_cen, :4]
                     tmp_lr_ratio = np.divide(
                         np.minimum(tmp_array[..., 0], 
-                                   tmp_array[..., 1]), 
+                                   tmp_array[..., 1]) + 1.0e-8, 
                         np.maximum(tmp_array[..., 0], 
                                    tmp_array[..., 1]) + 1.0e-8)
                     tmp_tb_ratio = 1.0
@@ -331,7 +332,7 @@ def format_data(gt_labels, img_dim, num_classes,
                     tmp_lr_ratio = 1.0
                     tmp_tb_ratio = np.divide(
                         np.minimum(tmp_array[..., 2], 
-                                   tmp_array[..., 3]), 
+                                   tmp_array[..., 3]) + 1.0e-8, 
                         np.maximum(tmp_array[..., 2], 
                                    tmp_array[..., 3]) + 1.0e-8)
                     
@@ -379,6 +380,10 @@ def smooth_l1_loss(xy_true, xy_pred, mask=1.0, delta=1.0):
     return smooth_l1_loss
 
 def iou_loss(xy_true, xy_pred, mask):
+    """
+    Intersection over Union (IoU) Loss Function.
+    Note that the coordinates are scaled by the stride of the feature map.
+    """
     # Generate the grid of centroids. #
     feat_dims = [tf.shape(xy_pred)[0], 
                  tf.shape(xy_pred)[1]]
@@ -447,6 +452,7 @@ def focal_loss(
 
 def model_loss(
     y_true, y_pred, strides, 
+    reg_type="l1", cen_type="l1", 
     cls_lambda=2.5, reg_lambda=1.0):
     """
     y_true: Normalised Gound Truth Bounding Boxes (x, y, w, h).
@@ -463,16 +469,19 @@ def model_loss(
             y_true[n_scale][..., 5:], 
             y_pred[n_scale][0][..., 5:])
         
-        cen_loss += smooth_l1_loss(
-            y_true[n_scale][..., 4], tf.nn.sigmoid(
-            y_pred[n_scale][0][..., 4]), mask=1.0)
+        if cen_type.lower() == "l1":
+            cen_loss += smooth_l1_loss(
+                y_true[n_scale][..., 4], tf.nn.sigmoid(
+                y_pred[n_scale][0][..., 4]), mask=1.0)
         
-        reg_loss += smooth_l1_loss(
-            y_true[n_scale][..., :4], 
-            y_pred[n_scale][0][..., :4], mask=tmp_mask)
-#        reg_loss += iou_loss(
-#            y_true_regression, 
-#            y_pred_regression, tmp_mask)
+        if reg_type == "iou":
+            reg_loss += iou_loss(
+                y_true[n_scale][..., :4], 
+                y_pred[n_scale][0][..., :4], tmp_mask)
+        else:
+            reg_loss += smooth_l1_loss(
+                y_true[n_scale][..., :4], 
+                y_pred[n_scale][0][..., :4], mask=tmp_mask)
     return cls_loss, reg_loss, cen_loss
 
     
