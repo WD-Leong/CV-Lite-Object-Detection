@@ -4,7 +4,7 @@ This repository contains my implementation of the Fully Convolutional One-Stage 
 ## Architecture of FCOS
 As shown in Fig. 1, the FCOS architecture includes the Feature Pyramid Network (FPN) but adds separate classification and regression heads.
 
-![FCOS Architecture](FCOS_architecture.jpg)
+![FCOS Architecture](FCOS_architecture.JPG)
 Fig. 1: FCOS Architecture (as shown in the [FCOS](https://arxiv.org/abs/1904.01355) paper).
 
 ## Losses
