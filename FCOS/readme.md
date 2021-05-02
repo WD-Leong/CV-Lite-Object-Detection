@@ -9,3 +9,6 @@ Fig. 1: FCOS Architecture (as shown in the [FCOS](https://arxiv.org/abs/1904.013
 
 ## Losses
 The original paper uses Binary Cross Entropy (BCE) for as the loss function for centerness and Intersection over Union (IoU) Loss for the bounding boxes. In the code, the Smooth L1-loss is implemented instead of IoU loss and BCE as it appeared to stabilize the training. However, it does support IoU loss (uncomment the relevant lines in the code). 
+
+## Modifications
+Unlike the original FCOS and [FCOSPlus](https://github.com/yqyao/FCOS_PLUS), `fcos_center.py` is based on assigning the object to the centroid of the corresponding feature map (P3 to P7), while `fcos_center_v1.py` modifies the bounding box to be similar to that of YOLO. 
